@@ -4,6 +4,7 @@ package ru.practicum.comment.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import ru.practicum.item.model.Item;
 import ru.practicum.user.model.User;
 
@@ -31,10 +32,12 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
+    @ToString.Exclude
     private Item item;
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
+    @ToString.Exclude
     private User author;
 
     @Transient

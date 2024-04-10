@@ -2,11 +2,13 @@ package ru.practicum.booking;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import ru.practicum.booking.dto.BookingInfo;
 import ru.practicum.booking.model.Booking;
 
 import java.util.List;
 
+@Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = " select * from bookings b " +

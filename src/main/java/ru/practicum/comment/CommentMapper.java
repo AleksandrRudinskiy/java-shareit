@@ -1,11 +1,13 @@
 package ru.practicum.comment;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.comment.dto.CommentAuthorNameDto;
 import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.comment.model.Comment;
 import ru.practicum.item.model.Item;
 import ru.practicum.user.model.User;
 
+@UtilityClass
 public class CommentMapper {
 
     public static CommentDto convertCommentToDto(Comment comment) {

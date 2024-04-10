@@ -1,7 +1,9 @@
 package ru.practicum.user.dto;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.user.model.User;
 
+@UtilityClass
 public class UserMapper {
 
     public static UserDto convertUserToDto(User user) {

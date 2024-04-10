@@ -1,11 +1,13 @@
 package ru.practicum.booking.dto;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.booking.model.Booking;
 import ru.practicum.item.ItemInfo;
 import ru.practicum.item.model.Item;
 import ru.practicum.user.UserInfo;
 import ru.practicum.user.model.User;
 
+@UtilityClass
 public class BookingMapper {
 
     public static Booking convertDtoToBooking(BookingDto bookingDto, User booker, Item item) {

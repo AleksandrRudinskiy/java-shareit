@@ -3,6 +3,7 @@ package ru.practicum.item.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
@@ -27,6 +28,7 @@ public class Item implements Serializable {
     private Boolean available;
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
+    @ToString.Exclude
     private User owner;
     private long requestId;
 }

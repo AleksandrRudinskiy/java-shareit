@@ -4,6 +4,7 @@ package ru.practicum.booking.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import ru.practicum.booking.Status;
 import ru.practicum.item.model.Item;
 import ru.practicum.user.model.User;
@@ -32,6 +33,7 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
+    @ToString.Exclude
     private Item item;
 
     @ManyToOne
