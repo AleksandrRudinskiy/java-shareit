@@ -17,6 +17,8 @@ import ru.practicum.item.dto.ItemDto;
 import ru.practicum.item.dto.ItemMapper;
 import ru.practicum.item.dto.ItemWithCommentsDto;
 import ru.practicum.item.model.Item;
+import ru.practicum.request.RequestRepository;
+import ru.practicum.request.model.ItemRequest;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
 
@@ -38,13 +40,19 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
         existsUser(userId);
         User owner = userRepository.getById(userId);
         itemDto.setOwnerId(userId);
-        return ItemMapper.convertItemToDto(itemRepository.save(ItemMapper.convertDtoToItem(itemDto, owner)));
+        ItemRequest request = null;
+
+        if (itemDto.getRequestId() != null) {
+             request = requestRepository.getById(itemDto.getRequestId());
+        }
+        return ItemMapper.convertItemToDto(itemRepository.save(ItemMapper.convertDtoToItem(itemDto, owner, request )));
     }
 
     @Override
@@ -70,8 +78,12 @@ public class ItemServiceImpl implements ItemService {
 
     private ItemDatesDto makeItemDatesDto(long itemId, long userId) {
         LocalDateTime NOW_TIME = LocalDateTime.now();
+
         Item item = itemRepository.getById(itemId);
+        log.info("item = {}", item);
+
         long ownerId = item.getOwner().getId();
+
         ItemDatesDto itemDatesDto = ItemMapper.convertItemToItemDatesDto(item, null, null);
         if (userId == ownerId) {
             List<BookingInfo> bookingList = bookingRepository.findByItem_Id(itemId).stream()
@@ -111,6 +123,8 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getName() != null) {
             oldItem.setName(itemDto.getName());
         }
+
+
         Item updateItem = itemRepository.save(oldItem);
         return ItemMapper.convertItemToDto(updateItem);
     }
