@@ -16,7 +16,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = " select * from bookings " +
             "join items i on bookings.item_id = i.id " +
             "where booker_id = ?1 " +
-            "order by start_date desc", nativeQuery = true)
+            "order by end_date desc", nativeQuery = true)
     List<Booking> getByBookerId(long bookerId, Pageable page);
 
     @Query(value = " select * from bookings " +
