@@ -2,6 +2,7 @@ package ru.practicum.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.booking.dto.BookingDto;
 import ru.practicum.booking.dto.BookingFullDto;
@@ -130,15 +131,23 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingFullDto> getOwnerBookings(long userId, String state) {
+    public List<BookingFullDto> getOwnerBookings(long userId, String state, int from, int size) {
         existsUser(userId);
-        return applyState(convertToFullDtoList(bookingRepository.getOwnerBookings(userId)), state);
+        if (from < 0 || size <= 0) {
+            throw new NotCorrectDataException("Параметр from не должен быть меньше 1");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        return applyState(convertToFullDtoList(bookingRepository.getOwnerBookings(userId, page)), state);
     }
 
     @Override
-    public List<BookingFullDto> getBookerBookings(long userId, String state) {
+    public List<BookingFullDto> getBookerBookings(long userId, String state, int from, int size) {
         existsUser(userId);
-        return applyState(convertToFullDtoList(bookingRepository.getBookerBookings(userId)), state);
+        if (from < 0 || size <= 0) {
+            throw new NotCorrectDataException("Параметр from не должен быть меньше 1");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        return applyState(convertToFullDtoList(bookingRepository.getByBookerId(userId, page)), state);
     }
 
     private List<BookingFullDto> convertToFullDtoList(List<Booking> bookingList) {

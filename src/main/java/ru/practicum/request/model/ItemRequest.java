@@ -10,6 +10,7 @@ import ru.practicum.user.model.User;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Table(name = "requests", schema = "public")
@@ -31,6 +32,5 @@ public class ItemRequest {
     @NotNull
     private User requestor;
 
-
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 }
