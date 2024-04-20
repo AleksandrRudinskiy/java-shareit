@@ -15,8 +15,8 @@ import ru.practicum.request.model.ItemRequest;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +28,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto addRequest(long userId, ItemRequestDto requestDto) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь с id = " + userId + " не существует.");
-        }
+        existsUser(userId);
         requestDto.setRequestorId(userId);
         User requestor = userRepository.getById(userId);
         return ItemRequestMapper.convertToItemRequestDto(
@@ -39,37 +37,20 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestWithItemsDto> getByRequestorId(long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь с id = " + userId + " не существует.");
-        }
+        existsUser(userId);
         List<ItemRequest> requests = requestRepository.getByRequestorId(userId);
-
-        List<ItemRequestWithItemsDto> itemRequestWithItemsDtos = new ArrayList<>();
-//переписать через единый запрос без цикла!
-        for (ItemRequest request : requests) {
-
-
-            List<ItemInfo> items = itemRepository.getByRequestId(request.getId());
-
-
-            ItemRequestWithItemsDto itemRequestWithItemsDto = ItemRequestMapper.convertToItemRequestWithItemsDto(request, items);
-            itemRequestWithItemsDtos.add(itemRequestWithItemsDto);
-        }
-        return itemRequestWithItemsDtos;
+        return requests.stream()
+                .map(r -> ItemRequestMapper.convertToItemRequestWithItemsDto(
+                        r, itemRepository.getByRequestId(r.getId())))
+                .collect(Collectors.toList());
     }
-
 
     @Override
     public ItemRequestWithItemsDto getById(long userId, long id) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь с id = " + userId + " не существует.");
-        }
-
+        existsUser(userId);
         if (!requestRepository.existsById(id)) {
             throw new NotFoundException("Запроса с requestId = " + id + " не существует.");
         }
-
-
         List<ItemInfo> items = itemRepository.getByRequestId(id);
         return ItemRequestMapper.convertToItemRequestWithItemsDto(requestRepository.getByRequestId(id), items);
     }
@@ -77,23 +58,19 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestWithItemsDto> getAll(long requestorId, int from, int size) {
         if (from < 0 || size <= 0) {
-            throw new NotCorrectDataException("Параметр from не должен быть меньше 1");
+            throw new NotCorrectDataException("Параметр from не должен быть меньше 1.");
         }
-
-
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
-
         List<ItemRequest> requests = requestRepository.findAllNotRequestorId(requestorId, page).toList();
+        return requests.stream()
+                .map(r -> ItemRequestMapper.convertToItemRequestWithItemsDto(
+                        r, itemRepository.getByRequestId(r.getId())))
+                .collect(Collectors.toList());
+    }
 
-        List<ItemRequestWithItemsDto> itemRequestWithItemsDtos = new ArrayList<>();
-
-//переписать через единый запрос без цикла!
-
-        for (ItemRequest request : requests) {
-            List<ItemInfo> items = itemRepository.getByRequestId(request.getId());
-            ItemRequestWithItemsDto itemRequestWithItemsDto = ItemRequestMapper.convertToItemRequestWithItemsDto(request, items);
-            itemRequestWithItemsDtos.add(itemRequestWithItemsDto);
+    private void existsUser(long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("Пользователь с id = " + userId + " не существует.");
         }
-        return itemRequestWithItemsDtos;
     }
 }
