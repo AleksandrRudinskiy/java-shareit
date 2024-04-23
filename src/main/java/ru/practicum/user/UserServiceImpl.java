@@ -1,10 +1,8 @@
 package ru.practicum.user;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.exception.DuplicateUserEmailException;
-import ru.practicum.exception.NoUserEmailException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.WrongFormatUserEmailException;
 import ru.practicum.user.dto.UserDto;
@@ -18,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -26,8 +23,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto add(UserDto userDto) {
-        validateUser(UserMapper.convertDtotoUser(userDto));
-        return UserMapper.convertUserToDto(userRepository.save(UserMapper.convertDtotoUser(userDto)));
+        validateUser(UserMapper.convertDtoToUser(userDto));
+        return UserMapper.convertUserToDto(userRepository.save(UserMapper.convertDtoToUser(userDto)));
     }
 
     @Override
@@ -43,8 +40,6 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("Пользователь с id = " + userId + " не существует.");
         }
         User oldUser = userRepository.getById(userId);
-        log.info("Обновляемый пользователь {}", oldUser);
-
         if (userDto.getName() != null) {
             oldUser.setName(userDto.getName());
         }
@@ -56,7 +51,6 @@ public class UserServiceImpl implements UserService {
             oldUser.setEmail(userDto.getEmail());
         }
         User patchUser = userRepository.save(oldUser);
-        log.info("ОБНОВЛЕННЫЙ ПОЛЬЗОВАТЕЛЬ {}", patchUser);
         return UserMapper.convertUserToDto(patchUser);
     }
 
@@ -65,13 +59,11 @@ public class UserServiceImpl implements UserService {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не существует.");
         }
-
         return UserMapper.convertUserToDto(userRepository.getById(userId));
     }
 
     @Override
     public void deleteUser(long userId) {
-
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не существует.");
         }
@@ -79,9 +71,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateUser(User user) {
-        if (user.getEmail() == null) {
-            throw new NoUserEmailException("Не указан email пользователя.");
-        }
         if (!user.getEmail().contains("@")) {
             throw new WrongFormatUserEmailException("Email должен содержать символ \"@\".");
         }

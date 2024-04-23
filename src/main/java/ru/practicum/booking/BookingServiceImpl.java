@@ -122,10 +122,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void validate(BookingDto bookingDto) {
-        if (bookingDto.getStart().isAfter(bookingDto.getEnd())
-                || bookingDto.getStart().isEqual(bookingDto.getEnd())
-                || bookingDto.getStart().isBefore(LocalDateTime.now())
-                || bookingDto.getEnd().isBefore(LocalDateTime.now())) {
+        if (LocalDateTime.parse(bookingDto.getStart())
+                .isAfter(LocalDateTime.parse(bookingDto.getEnd()))
+                || LocalDateTime.parse(bookingDto.getStart())
+                .isEqual(LocalDateTime.parse(bookingDto.getEnd()))
+                || LocalDateTime.parse(bookingDto.getStart()).isBefore(LocalDateTime.now())
+                || LocalDateTime.parse(bookingDto.getEnd()).isBefore(LocalDateTime.now())) {
             throw new NotCorrectDataException("Даты бронирования указаны не верно/не указаны.");
         }
     }
@@ -167,15 +169,16 @@ public class BookingServiceImpl implements BookingService {
         switch (State.valueOf(state)) {
             case CURRENT:
                 return bookingFullDtos.stream()
-                        .filter(b -> b.getEnd().isAfter(LocalDateTime.now()) && b.getStart().isBefore(LocalDateTime.now()))
+                        .filter(b -> LocalDateTime.parse(b.getEnd()).isAfter(LocalDateTime.now())
+                                && LocalDateTime.parse(b.getStart()).isBefore(LocalDateTime.now()))
                         .collect(Collectors.toList());
             case PAST:
                 return bookingFullDtos.stream()
-                        .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
+                        .filter(b -> LocalDateTime.parse(b.getEnd()).isBefore(LocalDateTime.now()))
                         .collect(Collectors.toList());
             case FUTURE:
                 return bookingFullDtos.stream()
-                        .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
+                        .filter(b -> LocalDateTime.parse(b.getStart()).isAfter(LocalDateTime.now()))
                         .collect(Collectors.toList());
             case WAITING:
                 return bookingFullDtos.stream()
@@ -189,7 +192,6 @@ public class BookingServiceImpl implements BookingService {
                 return bookingFullDtos;
             case UNSUPPORTED_STATUS:
                 throw new NotSupportedStateException("Unknown state: UNSUPPORTED_STATUS");
-
         }
         return bookingFullDtos;
     }

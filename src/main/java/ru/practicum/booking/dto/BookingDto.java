@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.booking.Status;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -15,9 +14,9 @@ import java.time.LocalDateTime;
 public class BookingDto {
     private long id;
     @NotNull
-    private LocalDateTime start;
+    private String start;
     @NotNull
-    private LocalDateTime end;
+    private String end;
     private long itemId;
     private String itemName;
     @JsonProperty("booker")

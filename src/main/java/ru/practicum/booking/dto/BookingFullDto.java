@@ -1,5 +1,8 @@
 package ru.practicum.booking.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,8 +17,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BookingFullDto {
     private long id;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    private String start;
+    private String end;
     private ItemInfo item;
     private UserInfo booker;
     private Status status;

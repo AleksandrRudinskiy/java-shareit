@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS items (
     is_available boolean,
     owner_id BIGINT,
     request_id BIGINT,
-
     CONSTRAINT pk_item PRIMARY KEY (id)
 );
 
@@ -28,7 +27,6 @@ CREATE TABLE IF NOT EXISTS requests (
     description VARCHAR,
     requestor_id BIGINT,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-
     CONSTRAINT pk_request PRIMARY KEY (id)
 );
 
@@ -55,7 +53,6 @@ ALTER TABLE bookings ADD FOREIGN KEY (booker_id) REFERENCES users (id);
 ALTER TABLE bookings ADD FOREIGN KEY (item_id) REFERENCES items (id);
 ALTER TABLE comments ADD FOREIGN KEY (item_id) REFERENCES items (id);
 ALTER TABLE comments ADD FOREIGN KEY (author_id) REFERENCES users (id);
-
 ALTER TABLE requests ADD FOREIGN KEY (requestor_id) REFERENCES users (id);
 ALTER TABLE items ADD FOREIGN KEY (request_id) REFERENCES requests (id);
 

@@ -13,7 +13,7 @@ public class UserMapper {
         );
     }
 
-    public static User convertDtotoUser(UserDto userDto) {
+    public static User convertDtoToUser(UserDto userDto) {
         return new User(userDto.getId(),
                 userDto.getName(),
                 userDto.getEmail());

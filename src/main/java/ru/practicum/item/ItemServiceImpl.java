@@ -1,7 +1,6 @@
 package ru.practicum.item;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.booking.BookingRepository;
 import ru.practicum.booking.Status;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
@@ -78,12 +76,8 @@ public class ItemServiceImpl implements ItemService {
 
     private ItemDatesDto makeItemDatesDto(long itemId, long userId) {
         LocalDateTime NOW_TIME = LocalDateTime.now();
-
         Item item = itemRepository.getById(itemId);
-        log.info("item = {}", item);
-
         long ownerId = item.getOwner().getId();
-
         ItemDatesDto itemDatesDto = ItemMapper.convertItemToItemDatesDto(item, null, null);
         if (userId == ownerId) {
             List<BookingInfo> bookingList = bookingRepository.findByItem_Id(itemId).stream()
@@ -123,8 +117,6 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getName() != null) {
             oldItem.setName(itemDto.getName());
         }
-
-
         Item updateItem = itemRepository.save(oldItem);
         return ItemMapper.convertItemToDto(updateItem);
     }
