@@ -2,6 +2,7 @@ package ru.practicum.shareit.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,8 +20,6 @@ import ru.practicum.comment.CommentRepository;
 import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.comment.model.Comment;
 import ru.practicum.item.ItemRepository;
-import ru.practicum.item.dto.ItemDto;
-import ru.practicum.item.dto.ItemMapper;
 import ru.practicum.item.model.Item;
 import ru.practicum.request.RequestRepository;
 import ru.practicum.request.model.ItemRequest;
@@ -43,6 +42,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(
         locations = "classpath:application-integrationtest.properties")
 public class CommentControllerIntegrationTest {
+    private final ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    CommentRepository commentRepository;
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -50,12 +52,9 @@ public class CommentControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    CommentRepository commentRepository;
-    @Autowired
     private BookingRepository bookingRepository;
     @Autowired
     private RequestRepository requestRepository;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void postCommentThenStatus200() throws Exception {
@@ -83,6 +82,13 @@ public class CommentControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(commentDto.getId()), Long.class))
                 .andExpect(jsonPath("$.text", is(commentDto.getText())));
+    }
+
+    @AfterEach
+    public void clear() {
+        itemRepository.deleteAll();
+        requestRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
 

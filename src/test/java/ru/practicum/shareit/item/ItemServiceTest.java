@@ -31,12 +31,12 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceTest {
-    private ItemRepository itemRepository = Mockito.mock(ItemRepository.class);
-    private UserRepository userRepository = Mockito.mock(UserRepository.class);
-    private BookingRepository bookingRepository = Mockito.mock(BookingRepository.class);
-    private CommentRepository commentRepository = Mockito.mock(CommentRepository.class);
-    private RequestRepository requestRepository = Mockito.mock(RequestRepository.class);
-    private ItemService itemService = new ItemServiceImpl(
+    private final ItemRepository itemRepository = Mockito.mock(ItemRepository.class);
+    private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    private final BookingRepository bookingRepository = Mockito.mock(BookingRepository.class);
+    private final CommentRepository commentRepository = Mockito.mock(CommentRepository.class);
+    private final RequestRepository requestRepository = Mockito.mock(RequestRepository.class);
+    private final ItemService itemService = new ItemServiceImpl(
             itemRepository, userRepository, bookingRepository, commentRepository, requestRepository);
 
     @Test
@@ -51,12 +51,12 @@ public class ItemServiceTest {
 
         when(userRepository.existsById(Mockito.anyLong()))
                 .thenReturn(true);
-        when(itemRepository.getByOwner_id(anyLong()))
+        when(itemRepository.getByOwner_id(anyLong(), any()))
                 .thenReturn(List.of(item));
         when(itemRepository.getById(anyLong()))
                 .thenReturn(item);
 
-        List<ItemDatesDto> items = itemService.getUserItems(1);
+        List<ItemDatesDto> items = itemService.getUserItems(1, 1, 1);
 
         Assertions.assertEquals(1, items.size());
     }

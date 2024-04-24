@@ -22,6 +22,5 @@ public class ItemDto {
     private Boolean available;
     private long ownerId;
 
-    //@JsonInclude(JsonInclude.Include.NON_NULL)
     private Long requestId;
 }

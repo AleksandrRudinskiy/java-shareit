@@ -21,13 +21,13 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
 
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
-    private UserService userService = new UserServiceImpl(userRepository);
-    private UserDto userDto = new UserDto(
+    private final UserService userService = new UserServiceImpl(userRepository);
+    private final UserDto userDto = new UserDto(
             1L,
             "John",
             "john.doe@mail.com");
 
-    private User newUser = new User(
+    private final User newUser = new User(
             1L,
             "NewJohn",
             "john.doe@mail.com");

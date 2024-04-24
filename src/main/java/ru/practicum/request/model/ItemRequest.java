@@ -10,7 +10,6 @@ import ru.practicum.user.model.User;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Table(name = "requests", schema = "public")
@@ -23,7 +22,6 @@ public class ItemRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotBlank
-    @NotNull
     private String description;
 
     @ManyToOne
@@ -31,6 +29,5 @@ public class ItemRequest {
     @ToString.Exclude
     @NotNull
     private User requestor;
-
     private LocalDateTime created = LocalDateTime.now();
 }

@@ -2,8 +2,8 @@ package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.ShareItApp;
 import ru.practicum.user.UserRepository;
-import ru.practicum.user.UserService;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.dto.UserMapper;
 import ru.practicum.user.model.User;
@@ -34,13 +33,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(
         locations = "classpath:application-integrationtest.properties")
 public class UserControllerIntegrationTest {
+    private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     private MockMvc mvc;
-
     @Autowired
     private UserRepository userRepository;
-
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void postUserThenStatus200() throws Exception {
@@ -89,7 +86,10 @@ public class UserControllerIntegrationTest {
                 .andExpect(status().isOk());
     }
 
-
+    @AfterEach
+    public void clear() {
+        userRepository.deleteAll();
+    }
 
 
 }

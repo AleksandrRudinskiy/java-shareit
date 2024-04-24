@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.item.ItemInfo;
-import ru.practicum.item.model.Item;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,10 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 public class ItemRequestWithItemsDto {
     private long id;
-    @NotNull
     @NotBlank
     private String description;
     private long requestorId;
-    private LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created;
     private List<ItemInfo> items;
 }

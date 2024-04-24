@@ -1,7 +1,6 @@
 package ru.practicum.request;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exception.NotCorrectDataException;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ItemRequestServiceImpl implements ItemRequestService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
@@ -36,7 +34,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestWithItemsDto> getByRequestorId(long userId) {
+    public List<ItemRequestWithItemsDto> getRequestsByRequestorId(long userId) {
         existsUser(userId);
         List<ItemRequest> requests = requestRepository.getByRequestorId(userId);
         return requests.stream()
@@ -46,7 +44,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestWithItemsDto getById(long userId, long id) {
+    public ItemRequestWithItemsDto getRequestById(long userId, long id) {
         existsUser(userId);
         if (!requestRepository.existsById(id)) {
             throw new NotFoundException("Запроса с requestId = " + id + " не существует.");
@@ -56,7 +54,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestWithItemsDto> getAll(long requestorId, int from, int size) {
+    public List<ItemRequestWithItemsDto> getAllRequests(long requestorId, int from, int size) {
         if (from < 0 || size <= 0) {
             throw new NotCorrectDataException("Параметр from не должен быть меньше 1.");
         }
@@ -66,6 +64,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .map(r -> ItemRequestMapper.convertToItemRequestWithItemsDto(
                         r, itemRepository.getByRequestId(r.getId())))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteRequestById(long id) {
+        requestRepository.deleteById(id);
     }
 
     private void existsUser(long userId) {

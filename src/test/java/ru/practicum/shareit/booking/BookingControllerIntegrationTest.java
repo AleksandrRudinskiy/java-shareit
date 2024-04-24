@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,9 +31,8 @@ import ru.practicum.user.model.User;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
-import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -44,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 public class BookingControllerIntegrationTest {
+    private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -54,7 +55,6 @@ public class BookingControllerIntegrationTest {
     private BookingRepository bookingRepository;
     @Autowired
     private RequestRepository requestRepository;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void postBookingThenStatus200() throws Exception {
@@ -142,6 +142,13 @@ public class BookingControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @AfterEach
+    public void clear() {
+        itemRepository.deleteAll();
+        requestRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
 }

@@ -3,10 +3,10 @@ package ru.practicum.request.dto;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.item.ItemInfo;
-import ru.practicum.item.model.Item;
 import ru.practicum.request.model.ItemRequest;
 import ru.practicum.user.model.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @UtilityClass
@@ -26,7 +26,7 @@ public class ItemRequestMapper {
                 requestDto.getId(),
                 requestDto.getDescription(),
                 requestor,
-                requestDto.getCreated()
+                LocalDateTime.now()
         );
     }
 

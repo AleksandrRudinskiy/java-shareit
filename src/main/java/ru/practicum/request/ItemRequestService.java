@@ -10,10 +10,12 @@ public interface ItemRequestService {
 
     ItemRequestDto addRequest(long requestorId, ItemRequestDto requestDto);
 
-    List<ItemRequestWithItemsDto> getByRequestorId(long userId);
+    List<ItemRequestWithItemsDto> getRequestsByRequestorId(long userId);
 
-    ItemRequestWithItemsDto getById(long userId, long id);
+    ItemRequestWithItemsDto getRequestById(long userId, long id);
 
-    List<ItemRequestWithItemsDto> getAll(long userId, int from, int size);
+    List<ItemRequestWithItemsDto> getAllRequests(long userId, int from, int size);
+
+    void deleteRequestById(long id);
 
 }

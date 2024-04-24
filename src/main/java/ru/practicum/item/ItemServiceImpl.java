@@ -1,6 +1,7 @@
 package ru.practicum.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.booking.BookingRepository;
 import ru.practicum.booking.Status;
@@ -48,16 +49,20 @@ public class ItemServiceImpl implements ItemService {
         ItemRequest request = null;
 
         if (itemDto.getRequestId() != null) {
-             request = requestRepository.getById(itemDto.getRequestId());
+            request = requestRepository.getById(itemDto.getRequestId());
         }
-        return ItemMapper.convertItemToDto(itemRepository.save(ItemMapper.convertDtoToItem(itemDto, owner, request )));
+        return ItemMapper.convertItemToDto(itemRepository.save(ItemMapper.convertDtoToItem(itemDto, owner, request)));
     }
 
     @Override
-    public List<ItemDatesDto> getUserItems(long userId) {
+    public List<ItemDatesDto> getUserItems(long userId, int from, int size) {
         existsUser(userId);
         List<ItemDatesDto> itemDatesDtoList = new ArrayList<>();
-        List<Item> usersItems = itemRepository.getByOwner_id(userId);
+        if (from < 0 || size <= 0) {
+            throw new NotCorrectDataException("Параметр from не должен быть меньше 1.");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        List<Item> usersItems = itemRepository.getByOwner_id(userId, page);
         usersItems.forEach(i -> itemDatesDtoList.add(makeItemDatesDto(i.getId(), userId)));
         return itemDatesDtoList;
     }
@@ -122,11 +127,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> search(long userId, String text) {
+    public List<ItemDto> search(long userId, String text, int from, int size) {
+        if (from < 0 || size <= 0) {
+            throw new NotCorrectDataException("Параметр from не должен быть меньше 1.");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
         if (text.isEmpty()) {
             return new ArrayList<>();
         } else {
-            return itemRepository.search(text).stream()
+            return itemRepository.search(text, page).stream()
                     .map(ItemMapper::convertItemToDto)
                     .collect(Collectors.toList());
         }
