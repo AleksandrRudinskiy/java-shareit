@@ -7,10 +7,12 @@ import ru.practicum.request.model.ItemRequest;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @UtilityClass
 public class ItemRequestMapper {
+    private final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
     public static ItemRequestDto convertToItemRequestDto(ItemRequest request) {
         return new ItemRequestDto(
