@@ -14,14 +14,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.ShareItApp;
 import ru.practicum.request.RequestRepository;
+import ru.practicum.request.dto.ItemRequestDto;
+import ru.practicum.request.dto.ItemRequestMapper;
 import ru.practicum.request.model.ItemRequest;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -40,6 +44,26 @@ public class ItemRequestControllerIntegrationTest {
     @Autowired
     private RequestRepository requestRepository;
 
+
+    @Test
+    public void addItemRequestTest() throws Exception {
+        User user = userRepository.save(
+                new User(1L, "Kolya", "newmail@mail.com"));
+        ItemRequest itemRequest = requestRepository.save(
+                new ItemRequest(1L, "Нужна дрель", user, LocalDateTime.now()));
+        ItemRequestDto itemRequestDto = ItemRequestMapper.convertToItemRequestDto(itemRequest);
+        mvc.perform(post("/requests")
+                        .content(mapper.writeValueAsString(itemRequestDto))
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.description", is("Нужна дрель")));
+    }
+
     @Test
     public void getItemRequestById1ThenStatus200() throws Exception {
         User user = userRepository.save(
@@ -57,11 +81,22 @@ public class ItemRequestControllerIntegrationTest {
     }
 
     @Test
-    public void getAllRequestsThenStatus200() throws Exception {
+    public void getRequestsThenStatus200() throws Exception {
         User user = userRepository.save(
                 new User(1L, "Kolya", "newmail@mail.com"));
 
         mvc.perform(get("/requests")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getAllRequestsThenStatus200() throws Exception {
+        User user = userRepository.save(
+                new User(1L, "Kolya", "newmail@mail.com"));
+
+        mvc.perform(get("/requests/all")
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

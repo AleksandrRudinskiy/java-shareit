@@ -19,7 +19,7 @@ public class ItemRequestMapper {
                 request.getId(),
                 request.getDescription(),
                 request.getRequestor().getId(),
-                request.getCreated()
+                request.getCreated().format(formatter)
         );
     }
 
@@ -28,7 +28,7 @@ public class ItemRequestMapper {
                 requestDto.getId(),
                 requestDto.getDescription(),
                 requestor,
-                LocalDateTime.now()
+                LocalDateTime.parse(requestDto.getCreated())
         );
     }
 

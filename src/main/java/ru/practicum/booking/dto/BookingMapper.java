@@ -28,7 +28,6 @@ public class BookingMapper {
     public static BookingFullDto convertToFullDto(Booking booking, ItemInfo itemInfo, UserInfo booker) {
         return new BookingFullDto(
                 booking.getId(),
-
                 booking.getStart().format(formatter),
                 booking.getEnd().format(formatter),
                 itemInfo,

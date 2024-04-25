@@ -14,6 +14,8 @@ import ru.practicum.request.model.ItemRequest;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,11 +25,13 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
     @Override
     public ItemRequestDto addRequest(long userId, ItemRequestDto requestDto) {
         existsUser(userId);
         requestDto.setRequestorId(userId);
+        requestDto.setCreated(LocalDateTime.now().format(formatter));
         User requestor = userRepository.getById(userId);
         return ItemRequestMapper.convertToItemRequestDto(
                 requestRepository.save(ItemRequestMapper.convertToItemRequest(requestDto, requestor)));

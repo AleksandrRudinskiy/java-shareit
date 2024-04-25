@@ -20,8 +20,7 @@ import ru.practicum.user.model.User;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -55,6 +54,23 @@ public class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(userDto.getName())))
                 .andExpect(jsonPath("$.email", is(userDto.getEmail())));
+    }
+
+    @Test
+    public void updateUserThenStatus200() throws Exception {
+        userRepository.save(new User(1L, "Petia",
+                "newemail@mail.com"));
+        User updateUser = new User(1L, "Petia", "update_mail@mail.com");
+        UserDto updateUserDto = UserMapper.convertUserToDto(updateUser);
+        mvc.perform(patch("/users/1")
+                        .content(mapper.writeValueAsString(updateUserDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(updateUserDto.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(updateUserDto.getName())))
+                .andExpect(jsonPath("$.email", is(updateUserDto.getEmail())));
     }
 
     @Test

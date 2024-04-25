@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.practicum.request.dto.ItemRequestDto;
 import ru.practicum.request.dto.ItemRequestMapper;
 import ru.practicum.request.dto.ItemRequestWithItemsDto;
 import ru.practicum.request.model.ItemRequest;
@@ -22,7 +23,7 @@ public class ItemRequestMapperDtoTest {
     private ObjectMapper objectMapper;
 
     @Test
-    public void testItemRequestDtoFormat() throws Exception {
+    public void testItemRequestWithItemsDtoFormat() throws Exception {
         User user = new User(1L, "Petia", "newemail@mail.com");
         User requestor = new User(2L, "Kolya", "mail@mail.com");
         ItemRequest request = new ItemRequest(1L, "нужна дрель",
@@ -32,5 +33,32 @@ public class ItemRequestMapperDtoTest {
         String expectedResult = "{\"id\":1,\"description\":\"нужна дрель\"," +
                 "\"requestorId\":1,\"created\":\"2024-04-25T10:08:54\",\"items\":null}";
         assertEquals(expectedResult, objectMapper.writeValueAsString(itemRequestWithItemsDto));
+    }
+
+    @Test
+    public void testItemRequestDtoFormat() throws Exception {
+        User user = new User(1L, "Petia", "newemail@mail.com");
+        ItemRequest request = new ItemRequest(1L, "нужна дрель",
+                user, LocalDateTime.of(2024, 4, 25, 10, 8, 54));
+        ItemRequestDto itemRequestDto = ItemRequestMapper.convertToItemRequestDto(request);
+        String expectedResult = "{\"id\":1,\"description\":\"нужна дрель\"," +
+                "\"requestorId\":1,\"created\":\"2024-04-25T10:08:54\"}";
+        assertEquals(expectedResult, objectMapper.writeValueAsString(itemRequestDto));
+    }
+
+    @Test
+    public void testItemRequestFormat() throws Exception {
+
+        User requestor = new User(2L, "Kolya", "mail@mail.com");
+        ItemRequest request = new ItemRequest(1L, "нужна дрель",
+                requestor, LocalDateTime.of(2024, 4, 25, 10, 8, 54));
+        ItemRequestDto itemRequestDto = ItemRequestMapper.convertToItemRequestDto(request);
+
+        ItemRequest resultRequest = ItemRequestMapper.convertToItemRequest(itemRequestDto, requestor);
+
+        String expectedResult = "{\"id\":1,\"description\":\"нужна дрель\"," +
+                "\"requestor\":{\"id\":2,\"name\":\"Kolya\",\"email\":\"mail@mail.com\"}," +
+                "\"created\":\"2024-04-25T10:08:54\"}";
+        assertEquals(expectedResult, objectMapper.writeValueAsString(resultRequest));
     }
 }
