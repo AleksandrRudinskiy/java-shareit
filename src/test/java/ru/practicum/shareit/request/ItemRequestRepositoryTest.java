@@ -37,7 +37,7 @@ public class ItemRequestRepositoryTest {
         userRepository.save(requestor);
         firstItemRequest = new ItemRequest(1L, "нужна дрель",
                 user, LocalDateTime.of(2026, 4, 25, 10, 8, 54));
-        requestRepository.save(firstItemRequest);
+        firstItemRequest = requestRepository.save(firstItemRequest);
     }
 
     @Test
