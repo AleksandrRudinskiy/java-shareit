@@ -122,12 +122,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void validate(BookingDto bookingDto) {
-        if (LocalDateTime.parse(bookingDto.getStart())
-                .isAfter(LocalDateTime.parse(bookingDto.getEnd()))
-                || LocalDateTime.parse(bookingDto.getStart())
-                .isEqual(LocalDateTime.parse(bookingDto.getEnd()))
-                || LocalDateTime.parse(bookingDto.getStart()).isBefore(LocalDateTime.now())
-                || LocalDateTime.parse(bookingDto.getEnd()).isBefore(LocalDateTime.now())) {
+        LocalDateTime startDate = LocalDateTime.parse(bookingDto.getStart());
+        LocalDateTime endDate = LocalDateTime.parse(bookingDto.getEnd());
+        if (startDate.isAfter(endDate) || startDate.isEqual(endDate)
+                || startDate.isBefore(LocalDateTime.now())
+                || endDate.isBefore(LocalDateTime.now())) {
             throw new NotCorrectDataException("Даты бронирования указаны не верно/не указаны.");
         }
     }

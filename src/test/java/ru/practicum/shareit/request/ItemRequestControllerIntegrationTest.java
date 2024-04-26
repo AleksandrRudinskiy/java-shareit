@@ -104,6 +104,7 @@ public class ItemRequestControllerIntegrationTest {
 
     @AfterEach
     public void clear() {
+        requestRepository.deleteAll();
         userRepository.deleteAll();
     }
 

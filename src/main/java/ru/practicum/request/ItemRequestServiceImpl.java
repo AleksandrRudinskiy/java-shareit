@@ -63,7 +63,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotCorrectDataException("Параметр from не должен быть меньше 1.");
         }
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
-        List<ItemRequest> requests = requestRepository.findAllNotRequestorId(requestorId, page).toList();
+        List<ItemRequest> requests = requestRepository.findAllNotRequestorId(requestorId, page);
         return requests.stream()
                 .map(r -> ItemRequestMapper.convertToItemRequestWithItemsDto(
                         r, itemRepository.getByRequestId(r.getId())))

@@ -1,6 +1,5 @@
 package ru.practicum.request;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,6 +20,6 @@ public interface RequestRepository extends JpaRepository<ItemRequest, Long> {
 
     @Query(value = "select * from requests " +
             "where requestor_id <> ?1 ", nativeQuery = true)
-    Page<ItemRequest> findAllNotRequestorId(long requestorId, Pageable page);
+    List<ItemRequest> findAllNotRequestorId(long requestorId, Pageable page);
 
 }

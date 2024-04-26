@@ -13,7 +13,6 @@ import java.util.List;
 @RequestMapping(path = "/bookings")
 @Slf4j
 @RequiredArgsConstructor
-
 public class BookingController {
     private final BookingService bookingService;
 

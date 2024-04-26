@@ -90,14 +90,14 @@ public class ItemServiceImpl implements ItemService {
             if (!bookingList.isEmpty()) {
                 Optional<BookingInfo> lastBookingOpt = bookingList.stream()
                         .sorted(Comparator.comparing(BookingInfo::getStart).reversed())
-                        .filter(b -> b.getStart().isBefore(NOW_TIME) && bookingRepository.getById(b.getId()).getStatus() == Status.APPROVED)
+                        .filter(b -> checkLastBooking(b, NOW_TIME))
                         .findFirst();
                 lastBookingOpt.ifPresent(itemDatesDto::setLastBooking);
                 bookingList = bookingRepository.findByItem_Id(itemId).stream()
                         .sorted(Comparator.comparing(BookingInfo::getEnd)).distinct().collect(Collectors.toList());
                 Optional<BookingInfo> nextBookingOpt = bookingList.stream()
                         .sorted(Comparator.comparing(BookingInfo::getEnd))
-                        .filter(b -> b.getStart().isAfter(NOW_TIME) && bookingRepository.getById(b.getId()).getStatus() == Status.APPROVED)
+                        .filter(b -> checkNextBooking(b, NOW_TIME))
                         .findFirst();
                 nextBookingOpt.ifPresent(itemDatesDto::setNextBooking);
             }
@@ -174,5 +174,15 @@ public class ItemServiceImpl implements ItemService {
         if (!itemRepository.existsById(itemId)) {
             throw new NotFoundException("Вещь с id = " + itemId + "не найдена.");
         }
+    }
+
+    private boolean checkLastBooking(BookingInfo booking, LocalDateTime currentDate) {
+        return booking.getStart().isBefore(currentDate) &&
+                bookingRepository.getById(booking.getId()).getStatus() == Status.APPROVED;
+    }
+
+    private boolean checkNextBooking(BookingInfo booking, LocalDateTime currentDate) {
+        return booking.getStart().isAfter(currentDate) &&
+                bookingRepository.getById(booking.getId()).getStatus() == Status.APPROVED;
     }
 }
