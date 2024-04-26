@@ -38,10 +38,6 @@ public class ItemRequestRepositoryTest {
         firstItemRequest = new ItemRequest(1L, "нужна дрель",
                 user, LocalDateTime.of(2026, 4, 25, 10, 8, 54));
         firstItemRequest = requestRepository.save(firstItemRequest);
-        requestRepository.save(new ItemRequest(2L, "нужна отвертка",
-                user, LocalDateTime.of(2027, 4, 25, 10, 8, 54)));
-        requestRepository.save(new ItemRequest(3L, "нужен клей",
-                requestor, LocalDateTime.of(2028, 4, 25, 10, 8, 54)));
     }
 
     @Test
