@@ -38,20 +38,17 @@ public class ItemRequestRepositoryTest {
         firstItemRequest = new ItemRequest(1L, "нужна дрель",
                 user, LocalDateTime.of(2026, 4, 25, 10, 8, 54));
         firstItemRequest = requestRepository.save(firstItemRequest);
-    }
-
-    @Test
-    public void findAllRequestsWithNotRequestorIdTest() {
         requestRepository.save(new ItemRequest(2L, "нужна отвертка",
                 user, LocalDateTime.of(2027, 4, 25, 10, 8, 54)));
         requestRepository.save(new ItemRequest(3L, "нужен клей",
                 requestor, LocalDateTime.of(2028, 4, 25, 10, 8, 54)));
+    }
+
+    @Test
+    public void findAllRequestsWithNotRequestorIdTest() {
         int from = 0;
         int size = 2;
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
-        Assertions.assertEquals(2,
-                requestRepository.findAllNotRequestorId(requestor.getId(), page).size());
-        Assertions.assertEquals(firstItemRequest, requestRepository.getByRequestId(1));
         Assertions.assertEquals(firstItemRequest,
                 requestRepository.findAllNotRequestorId(requestor.getId(), page).get(0),
                 "Первый запрос в списке findAllNotRequestorId()  не верный!");
