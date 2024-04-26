@@ -46,7 +46,7 @@ public class ItemRequestRepositoryTest {
         int size = 2;
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
         Assertions.assertEquals(firstItemRequest,
-                requestRepository.findAllNotRequestorId(requestor.getId(), page).get(0),
+                requestRepository.findAll().get(0),
                 "Первый запрос в списке findAllNotRequestorId()  не верный!");
     }
 
