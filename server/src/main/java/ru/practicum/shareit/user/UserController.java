@@ -17,7 +17,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> get() {
+    public List<UserDto> getUsers() {
         log.info("GET-запрос на получение всех пользователей");
         return userService.getUsers();
     }
@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto add(@RequestBody @Valid UserDto userDto) {
+    public UserDto createUser(@RequestBody UserDto userDto) {
         log.info("POST-запрос на добавление пользователя");
         return userService.add(userDto);
     }

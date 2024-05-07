@@ -34,7 +34,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-
     public UserDto update(long userId, UserDto userDto) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не существует.");
