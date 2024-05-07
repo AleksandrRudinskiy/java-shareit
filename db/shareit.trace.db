@@ -1,0 +1,9 @@
+2024-05-07 14:04:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found (this database is empty); SQL statement:
+select count(*) as col_0_0_ from public.users user0_ where user0_.id=? [42104-214]
+2024-05-07 14:05:04 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found (this database is empty); SQL statement:
+select user0_.id as id1_4_, user0_.email as email2_4_, user0_.name as name3_4_ from public.users user0_ [42104-214]
+2024-05-07 14:06:07 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found (this database is empty); SQL statement:
+select user0_.id as id1_4_, user0_.email as email2_4_, user0_.name as name3_4_ from public.users user0_ [42104-214]
