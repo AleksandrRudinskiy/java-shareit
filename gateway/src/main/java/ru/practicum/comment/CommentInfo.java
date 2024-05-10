@@ -1,4 +1,4 @@
-package ru.practicum.comment.dto;
+package ru.practicum.comment;
 
 public interface CommentInfo {
     long getId();
