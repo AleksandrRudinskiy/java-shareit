@@ -16,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Entity
 @NoArgsConstructor
-public class Item implements Serializable {
+public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
