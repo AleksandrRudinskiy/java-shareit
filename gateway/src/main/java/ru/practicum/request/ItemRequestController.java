@@ -31,15 +31,15 @@ public class ItemRequestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getRequestById(@RequestHeader(value = "X-Sharer-User-Id") long userId,
-                                                  @PathVariable long id) {
+                                                 @PathVariable long id) {
         log.info("GET-запрос на получение данных о запросе: id = {}", id);
         return itemRequestClient.getRequestById(userId, id);
     }
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllRequests(@RequestHeader(value = "X-Sharer-User-Id") long userId,
-                                                        @RequestParam(defaultValue = "0") int from,
-                                                        @RequestParam(defaultValue = "10") int size) {
+                                                 @RequestParam(defaultValue = "0") int from,
+                                                 @RequestParam(defaultValue = "10") int size) {
         return itemRequestClient.getAllRequests(userId, from, size);
     }
 

@@ -14,7 +14,6 @@ import ru.practicum.booking.dto.BookingState;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.List;
 
 @Controller
 @RequestMapping(path = "/bookings")
@@ -54,8 +53,8 @@ public class BookingController {
     @GetMapping("/owner")
     public ResponseEntity<Object> getOwnerBookings(@RequestHeader(value = "X-Sharer-User-Id") long userId,
                                                    @RequestParam(defaultValue = "ALL", required = false) String state,
-                                                 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                                 @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                                                   @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                   @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         BookingState.from(state)
                 .orElseThrow(() -> new NotCorrectDataException("Unknown state: " + state));
         log.info("GET-запрос на получение всех бронирований собственника вещи");
@@ -64,9 +63,9 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> updateBooking(@PathVariable long bookingId,
-                                        @RequestHeader(value = "X-Sharer-User-Id") long userId,
-                                        @RequestParam(required = false) Boolean approved,
-                                        @RequestBody(required = false) BookingDto bookingDto) {
+                                                @RequestHeader(value = "X-Sharer-User-Id") long userId,
+                                                @RequestParam(required = false) Boolean approved,
+                                                @RequestBody(required = false) BookingDto bookingDto) {
         log.info("PATCH-запрос на подтверждение или отклонение запроса на бронирование");
         return bookingClient.updateBooking(bookingId, userId, approved, bookingDto);
     }

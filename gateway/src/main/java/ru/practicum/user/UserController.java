@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getUsersById(@PathVariable long userId) {
-        log.info("Get user by id {}",userId);
+        log.info("Get user by id {}", userId);
         return userClient.getUseById(userId);
     }
 
@@ -49,7 +49,6 @@ public class UserController {
         log.info("DELETE - delete user with  userId {}", userId);
         userClient.deleteUser(userId);
     }
-
 
 
 }
