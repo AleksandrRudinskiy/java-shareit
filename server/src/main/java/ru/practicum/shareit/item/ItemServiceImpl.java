@@ -80,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private ItemDatesDto makeItemDatesDto(long itemId, long userId) {
-        LocalDateTime NOW_TIME = LocalDateTime.now();
+        LocalDateTime nowTime = LocalDateTime.now();
         Item item = itemRepository.getById(itemId);
         long ownerId = item.getOwner().getId();
         ItemDatesDto itemDatesDto = ItemMapper.convertItemToItemDatesDto(item, null, null);
@@ -90,14 +90,14 @@ public class ItemServiceImpl implements ItemService {
             if (!bookingList.isEmpty()) {
                 Optional<BookingInfo> lastBookingOpt = bookingList.stream()
                         .sorted(Comparator.comparing(BookingInfo::getStart).reversed())
-                        .filter(b -> checkLastBooking(b, NOW_TIME))
+                        .filter(b -> checkLastBooking(b, nowTime))
                         .findFirst();
                 lastBookingOpt.ifPresent(itemDatesDto::setLastBooking);
                 bookingList = bookingRepository.findByItem_Id(itemId).stream()
                         .sorted(Comparator.comparing(BookingInfo::getEnd)).distinct().collect(Collectors.toList());
                 Optional<BookingInfo> nextBookingOpt = bookingList.stream()
                         .sorted(Comparator.comparing(BookingInfo::getEnd))
-                        .filter(b -> checkNextBooking(b, NOW_TIME))
+                        .filter(b -> checkNextBooking(b, nowTime))
                         .findFirst();
                 nextBookingOpt.ifPresent(itemDatesDto::setNextBooking);
             }
