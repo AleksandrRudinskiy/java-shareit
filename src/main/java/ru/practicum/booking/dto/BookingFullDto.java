@@ -7,15 +7,13 @@ import ru.practicum.booking.Status;
 import ru.practicum.item.ItemInfo;
 import ru.practicum.user.UserInfo;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingFullDto {
     private long id;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    private String start;
+    private String end;
     private ItemInfo item;
     private UserInfo booker;
     private Status status;

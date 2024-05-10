@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import ru.practicum.request.model.ItemRequest;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
@@ -26,9 +27,16 @@ public class Item implements Serializable {
     @Column(name = "is_available")
     @NotNull
     private Boolean available;
+
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     @ToString.Exclude
     private User owner;
-    private long requestId;
+
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    @ToString.Exclude
+    private ItemRequest request;
+
+
 }

@@ -2,6 +2,7 @@ package ru.practicum.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.booking.dto.BookingDto;
 import ru.practicum.booking.dto.BookingFullDto;
@@ -121,24 +122,33 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void validate(BookingDto bookingDto) {
-        if (bookingDto.getStart().isAfter(bookingDto.getEnd())
-                || bookingDto.getStart().isEqual(bookingDto.getEnd())
-                || bookingDto.getStart().isBefore(LocalDateTime.now())
-                || bookingDto.getEnd().isBefore(LocalDateTime.now())) {
+        LocalDateTime startDate = LocalDateTime.parse(bookingDto.getStart());
+        LocalDateTime endDate = LocalDateTime.parse(bookingDto.getEnd());
+        if (startDate.isAfter(endDate) || startDate.isEqual(endDate)
+                || startDate.isBefore(LocalDateTime.now())
+                || endDate.isBefore(LocalDateTime.now())) {
             throw new NotCorrectDataException("Даты бронирования указаны не верно/не указаны.");
         }
     }
 
     @Override
-    public List<BookingFullDto> getOwnerBookings(long userId, String state) {
+    public List<BookingFullDto> getOwnerBookings(long userId, String state, int from, int size) {
         existsUser(userId);
-        return applyState(convertToFullDtoList(bookingRepository.getOwnerBookings(userId)), state);
+        if (from < 0 || size <= 0) {
+            throw new NotCorrectDataException("Параметр from не должен быть меньше 1");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        return applyState(convertToFullDtoList(bookingRepository.getOwnerBookings(userId, page)), state);
     }
 
     @Override
-    public List<BookingFullDto> getBookerBookings(long userId, String state) {
+    public List<BookingFullDto> getBookerBookings(long userId, String state, int from, int size) {
         existsUser(userId);
-        return applyState(convertToFullDtoList(bookingRepository.getBookerBookings(userId)), state);
+        if (from < 0 || size <= 0) {
+            throw new NotCorrectDataException("Параметр from не должен быть меньше 1");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        return applyState(convertToFullDtoList(bookingRepository.getByBookerId(userId, page)), state);
     }
 
     private List<BookingFullDto> convertToFullDtoList(List<Booking> bookingList) {
@@ -158,15 +168,16 @@ public class BookingServiceImpl implements BookingService {
         switch (State.valueOf(state)) {
             case CURRENT:
                 return bookingFullDtos.stream()
-                        .filter(b -> b.getEnd().isAfter(LocalDateTime.now()) && b.getStart().isBefore(LocalDateTime.now()))
+                        .filter(b -> LocalDateTime.parse(b.getEnd()).isAfter(LocalDateTime.now())
+                                && LocalDateTime.parse(b.getStart()).isBefore(LocalDateTime.now()))
                         .collect(Collectors.toList());
             case PAST:
                 return bookingFullDtos.stream()
-                        .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
+                        .filter(b -> LocalDateTime.parse(b.getEnd()).isBefore(LocalDateTime.now()))
                         .collect(Collectors.toList());
             case FUTURE:
                 return bookingFullDtos.stream()
-                        .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
+                        .filter(b -> LocalDateTime.parse(b.getStart()).isAfter(LocalDateTime.now()))
                         .collect(Collectors.toList());
             case WAITING:
                 return bookingFullDtos.stream()
@@ -180,7 +191,6 @@ public class BookingServiceImpl implements BookingService {
                 return bookingFullDtos;
             case UNSUPPORTED_STATUS:
                 throw new NotSupportedStateException("Unknown state: UNSUPPORTED_STATUS");
-
         }
         return bookingFullDtos;
     }

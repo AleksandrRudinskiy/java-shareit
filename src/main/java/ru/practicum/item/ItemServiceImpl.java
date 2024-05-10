@@ -1,7 +1,7 @@
 package ru.practicum.item;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.booking.BookingRepository;
 import ru.practicum.booking.Status;
@@ -17,6 +17,8 @@ import ru.practicum.item.dto.ItemDto;
 import ru.practicum.item.dto.ItemMapper;
 import ru.practicum.item.dto.ItemWithCommentsDto;
 import ru.practicum.item.model.Item;
+import ru.practicum.request.RequestRepository;
+import ru.practicum.request.model.ItemRequest;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
 
@@ -31,27 +33,36 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
         existsUser(userId);
         User owner = userRepository.getById(userId);
         itemDto.setOwnerId(userId);
-        return ItemMapper.convertItemToDto(itemRepository.save(ItemMapper.convertDtoToItem(itemDto, owner)));
+        ItemRequest request = null;
+
+        if (itemDto.getRequestId() != null) {
+            request = requestRepository.getById(itemDto.getRequestId());
+        }
+        return ItemMapper.convertItemToDto(itemRepository.save(ItemMapper.convertDtoToItem(itemDto, owner, request)));
     }
 
     @Override
-    public List<ItemDatesDto> getUserItems(long userId) {
+    public List<ItemDatesDto> getUserItems(long userId, int from, int size) {
         existsUser(userId);
         List<ItemDatesDto> itemDatesDtoList = new ArrayList<>();
-        List<Item> usersItems = itemRepository.getByOwner_id(userId);
+        if (from < 0 || size <= 0) {
+            throw new NotCorrectDataException("Параметр from не должен быть меньше 1.");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        List<Item> usersItems = itemRepository.getByOwner_id(userId, page);
         usersItems.forEach(i -> itemDatesDtoList.add(makeItemDatesDto(i.getId(), userId)));
         return itemDatesDtoList;
     }
@@ -79,14 +90,14 @@ public class ItemServiceImpl implements ItemService {
             if (!bookingList.isEmpty()) {
                 Optional<BookingInfo> lastBookingOpt = bookingList.stream()
                         .sorted(Comparator.comparing(BookingInfo::getStart).reversed())
-                        .filter(b -> b.getStart().isBefore(NOW_TIME) && bookingRepository.getById(b.getId()).getStatus() == Status.APPROVED)
+                        .filter(b -> checkLastBooking(b, NOW_TIME))
                         .findFirst();
                 lastBookingOpt.ifPresent(itemDatesDto::setLastBooking);
                 bookingList = bookingRepository.findByItem_Id(itemId).stream()
                         .sorted(Comparator.comparing(BookingInfo::getEnd)).distinct().collect(Collectors.toList());
                 Optional<BookingInfo> nextBookingOpt = bookingList.stream()
                         .sorted(Comparator.comparing(BookingInfo::getEnd))
-                        .filter(b -> b.getStart().isAfter(NOW_TIME) && bookingRepository.getById(b.getId()).getStatus() == Status.APPROVED)
+                        .filter(b -> checkNextBooking(b, NOW_TIME))
                         .findFirst();
                 nextBookingOpt.ifPresent(itemDatesDto::setNextBooking);
             }
@@ -116,11 +127,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> search(long userId, String text) {
+    public List<ItemDto> search(long userId, String text, int from, int size) {
+        if (from < 0 || size <= 0) {
+            throw new NotCorrectDataException("Параметр from не должен быть меньше 1.");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
         if (text.isEmpty()) {
             return new ArrayList<>();
         } else {
-            return itemRepository.search(text).stream()
+            return itemRepository.search(text, page).stream()
                     .map(ItemMapper::convertItemToDto)
                     .collect(Collectors.toList());
         }
@@ -159,5 +174,15 @@ public class ItemServiceImpl implements ItemService {
         if (!itemRepository.existsById(itemId)) {
             throw new NotFoundException("Вещь с id = " + itemId + "не найдена.");
         }
+    }
+
+    private boolean checkLastBooking(BookingInfo booking, LocalDateTime currentDate) {
+        return booking.getStart().isBefore(currentDate) &&
+                bookingRepository.getById(booking.getId()).getStatus() == Status.APPROVED;
+    }
+
+    private boolean checkNextBooking(BookingInfo booking, LocalDateTime currentDate) {
+        return booking.getStart().isAfter(currentDate) &&
+                bookingRepository.getById(booking.getId()).getStatus() == Status.APPROVED;
     }
 }

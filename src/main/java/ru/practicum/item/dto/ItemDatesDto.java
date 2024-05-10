@@ -17,7 +17,7 @@ public class ItemDatesDto extends ItemDto {
     private String description;
     private Boolean available;
     private long ownerId;
-    private long requestId;
+    private Long requestId;
     private BookingInfo lastBooking;
     private BookingInfo nextBooking;
 }

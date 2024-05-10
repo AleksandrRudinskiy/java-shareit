@@ -3,6 +3,7 @@ package ru.practicum.item.dto;
 import ru.practicum.booking.dto.BookingInfo;
 import ru.practicum.comment.dto.CommentAuthorNameDto;
 import ru.practicum.item.model.Item;
+import ru.practicum.request.model.ItemRequest;
 import ru.practicum.user.model.User;
 
 import java.util.List;
@@ -16,17 +17,18 @@ public class ItemMapper {
                 item.getDescription(),
                 item.getAvailable(),
                 item.getOwner().getId(),
-                item.getRequestId()
+                item.getRequest() != null ? item.getRequest().getId() : 0
         );
     }
 
-    public static Item convertDtoToItem(ItemDto itemDto, User user) {
+    public static Item convertDtoToItem(ItemDto itemDto, User user, ItemRequest request) {
         return new Item(itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 user,
-                itemDto.getRequestId()
+                request
+
         );
     }
 
@@ -37,7 +39,7 @@ public class ItemMapper {
                 item.getDescription(),
                 item.getAvailable(),
                 item.getOwner().getId(),
-                item.getRequestId(),
+                null,
                 lastBooking,
                 nextBooking
         );
@@ -51,7 +53,7 @@ public class ItemMapper {
                 itemDatesDto.getDescription(),
                 itemDatesDto.getAvailable(),
                 itemDatesDto.getOwnerId(),
-                itemDatesDto.getRequestId(),
+                0,
                 itemDatesDto.getLastBooking(),
                 itemDatesDto.getNextBooking(),
                 comments
