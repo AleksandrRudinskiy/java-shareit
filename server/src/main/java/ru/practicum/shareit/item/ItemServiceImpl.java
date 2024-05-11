@@ -148,6 +148,7 @@ public class ItemServiceImpl implements ItemService {
         User author = userRepository.getById(authorId);
         Item item = itemRepository.getById(itemId);
         List<Booking> authorBookings = bookingRepository.findByBooker_Id(authorId);
+
         Optional<Booking> booking = authorBookings.stream()
                 .findFirst().filter(b -> b.getBooker().getId() == authorId
                         && !b.getStatus().equals(Status.REJECTED)

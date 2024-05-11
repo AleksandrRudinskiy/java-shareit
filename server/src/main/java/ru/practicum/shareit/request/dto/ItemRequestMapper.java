@@ -19,7 +19,7 @@ public class ItemRequestMapper {
                 request.getId(),
                 request.getDescription(),
                 request.getRequestor().getId(),
-                request.getCreated().format(formatter)
+                request.getCreated().toString()
         );
     }
 
@@ -37,7 +37,7 @@ public class ItemRequestMapper {
                 request.getId(),
                 request.getDescription(),
                 request.getRequestor().getId(),
-                request.getCreated(),
+                request.getCreated().format(formatter),
                 items
         );
     }

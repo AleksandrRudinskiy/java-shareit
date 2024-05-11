@@ -2,18 +2,39 @@ package ru.practicum.booking.dto;
 
 import java.util.Optional;
 
+/**
+ * По состоянию бронирования могут быть следующими
+ * {@link #ALL}
+ * {@link #CURRENT}
+ * {@link #FUTURE}
+ * {@link #PAST}
+ * {@link #REJECTED}
+ * {@link #WAITING}
+ */
 public enum BookingState {
-    // Все
+    /**
+     * Все
+     */
     ALL,
-    // Текущие
+    /**
+     * Текущие
+     */
     CURRENT,
-    // Будущие
+    /**
+     * Будующие
+     */
     FUTURE,
-    // Завершенные
+    /**
+     * Завершенные
+     */
     PAST,
-    // Отклоненные
+    /**
+     * Отклоненные
+     */
     REJECTED,
-    // Ожидающие подтверждения
+    /**
+     * Ожидающие подтверждения
+     */
     WAITING;
 
     public static Optional<BookingState> from(String stringState) {
